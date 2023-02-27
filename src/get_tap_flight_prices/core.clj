@@ -37,7 +37,7 @@
 
 (defn get-data [data-updated]
   (let [url "https://booking.flytap.com/bfm/rest/booking/availability/search/"
-        token "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiItYnFCaW5CaUh6NFlnKzg3Qk4rUFUzVGFYVVd5UnJuMVQvaVYvTGp4Z2VTQT0iLCJzY29wZXMiOlsiUk9MRV9BTk9OWU1PVVNfVVNFUiJdLCJob3N0IjoidGFwbHBhYjA0MDAwMDAxLmludGVybmFsLmNsb3VkYXBwLm5ldCIsInJhbmRvbSI6Ijk1WEhRIiwiaWF0IjoxNjc3NDQ4OTIzLCJleHAiOjE2Nzc0NTI1MjN9.ur3im70WlCeU7QbC4GD53aVQlGUDzgMsnvYPbBAEqbY"
+        token "<YOUR TOKEN GOES HERE!>"
         request-options {:headers {"Authorization" (str "Bearer " token)}
                          :cookie-policy :none}
         response (client/post url
