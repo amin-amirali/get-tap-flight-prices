@@ -69,9 +69,9 @@
   (let [url "https://booking.flytap.com/bfm/rest/session/create"
         request-options {:content-type :json
                          :cookie-policy :none}
-        form-params {:clientId "-bqBinBiHz4Yg+87BN+PU3TaXUWyRrn1T/iV/LjxgeSA="
-                     :clientSecret "DxKLkFeWzANc4JSIIarjoPSr6M+cXv1rcqWry2QV2Azr5EutGYR/oJ79IT3fMR+qM5H/RArvIPtyquvjHebM1Q=="
-                     :referralId "h7g+cmbKWJ3XmZajrMhyUpp9.cms35"
+        form-params {:clientId nil
+                     :clientSecret nil
+                     :referralId nil
                      :market "NO"
                      :language "en"
                      :userProfile nil
