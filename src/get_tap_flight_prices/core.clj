@@ -57,8 +57,8 @@
 
 (defn find-cheapest-flight-for-all-outbounds [res]
   (let [all-flights (parse-flight-info-list res)]
-   (for [vals (vals (group-by #(:outbound_id %) all-flights))]
-     (apply min-key :price vals))))
+    (for [vals (vals (group-by #(:outbound_id %) all-flights))]
+      (apply min-key :price vals))))
 
 (defn all-flights-info [res]
   (let [flight-dttm (parse-flight-dates res)]
@@ -96,23 +96,10 @@
 
 (defn get-flight-prices [data-updated from to token]
   (let [res (get-data data-updated token)
-        dates-list (->> res
-                        :data
-                        :listOutbound
-                        (map #(get-in % [:listSegment]))
-                        (map #(nth % 0))
-                        (map #(select-keys % [:departureDate :arrivalDate])))
-        price-list (->> res
-                        :data
-                        :offers
-                        :listOffers
-                        (filter #(= "CLANEW" (:outFareFamily %)))
-                        (map #(merge (select-keys % [:outFareFamily])
-                                     (-> (get-in % [:totalPrice])
-                                         (select-keys [:price])))))
+        cheapest-flights (all-flights-info res)
         source-list {:from from}
         destiny-list {:to to}]
-    (map #(merge %1 %2 %3 %4) dates-list price-list (repeat source-list) (repeat destiny-list))))
+    (map #(merge %1 %2 %3) cheapest-flights (repeat source-list) (repeat destiny-list))))
 
 (defn date-interval
   "Returns a seq of dates (as strings) between `start` and `end`, separated by 1 day"
@@ -151,4 +138,4 @@
         l1 (get-prices-between-dates from-airport to-airport start-dt end-dt token)
         l2 (get-prices-between-dates to-airport from-airport start-dt end-dt token)
         final-list (flatten (merge l1 l2))]
-    (print-rows-as-tsv final-list)))
+    (doall (print-rows-as-tsv final-list))))
