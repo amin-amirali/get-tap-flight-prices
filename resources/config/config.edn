@@ -1,0 +1,25 @@
+{:data {:adt 2
+        :chd 2
+        :passengers {:ADT 2 :CHD 2}
+        :paxSearch {:ADT 2 :CHD 2}
+        :numSeat 4
+        :numSeats 4
+        :departureDate ["04062023"]
+        :returnDate "04062023"
+        :origin ["OSL"]
+        :destination ["LIS"]
+        :cabinClass "E"
+        :airlineId "TP"
+        :bfmModule "BFM_BOOKING"
+        :c14 0
+        :language "en"
+        :market "NO"
+        :oneWay true
+        :roundTripType false
+        :searchPoint true
+        :session "string"
+        :tripType "O"
+        :validTripType true
+        :cmsId "string"
+        :channelDetectionName ""
+        }}
