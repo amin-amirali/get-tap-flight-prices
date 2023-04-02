@@ -1,38 +1,14 @@
 (ns get-tap-flight-prices.core
   (:gen-class)
-  (:require [clj-http.client :as client]
+  (:require [get-tap-flight-prices.config :as config]
+            [clj-http.client :as client]
             [cheshire.core :refer :all]
             [clojure.data.json :as json]
             [clj-time.core :as t]
-            [clj-time.format :as f]))
+            [clj-time.format :as f]
+            [mount.core :as mount]))
 
 (def custom-formatter (f/formatter "ddMMyyyy"))
-
-(def data {:adt 1
-           :chd 0
-           :passengers {:ADT 1 :CHD 0}
-           :paxSearch {:ADT 1 :CHD 0}
-           :numSeat 1
-           :numSeats 1
-           :departureDate ["04062023"]
-           :returnDate "04062023"
-           :origin ["OSL"]
-           :destination ["LIS"]
-           :cabinClass "E"
-           :airlineId "TP"
-           :bfmModule "BFM_BOOKING"
-           :c14 0
-           :language "en"
-           :market "NO"
-           :oneWay true
-           :roundTripType false
-           :searchPoint true
-           :session "string"
-           :tripType "O"
-           :validTripType true
-           :cmsId "string"
-           :channelDetectionName ""
-           })
 
 (defn getIdOutBoundFromList
   "From this: [{:idOutBound 1,(...)}{:idOutBound 2,(...)}]
@@ -113,7 +89,7 @@
 
 (defn get-prices-between-dates [from to start-dt end-dt token]
   (pmap
-    #(let [sorted-map (into (sorted-map) data)
+    #(let [sorted-map (into (sorted-map) (:data config/configs))
            data-updated (assoc sorted-map :returnDate %
                                           :origin [from]
                                           :destination [to]
@@ -131,6 +107,7 @@
 
 (defn -main
   [& args]
+  (mount/start)
   (let [[from-airport to-airport from-date to-date] args
         start-dt (f/parse from-date)
         end-dt (f/parse to-date)
