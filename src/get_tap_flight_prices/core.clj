@@ -2,14 +2,11 @@
   (:gen-class)
   (:require [get-tap-flight-prices.config :as config]
             [get-tap-flight-prices.print-map :as print-map]
+            [get-tap-flight-prices.date-helper :as date-helper]
             [clj-http.client :as client]
             [cheshire.core :refer :all]
             [clojure.data.json :as json]
-            [clj-time.core :as t]
-            [clj-time.format :as f]
             [mount.core :as mount]))
-
-(def custom-formatter (f/formatter "ddMMyyyy"))
 
 (defn getIdOutBoundFromList
   "From this: [{:idOutBound 1,(...)}{:idOutBound 2,(...)}]
@@ -78,32 +75,22 @@
         destiny-list {:to to}]
     (map #(merge %1 %2 %3) cheapest-flights (repeat source-list) (repeat destiny-list))))
 
-(defn date-interval
-  "Returns a seq of dates (as strings) between `start` and `end`, separated by 1 day"
-  ([start end] (date-interval start end []))
-  ([start end interval]
-   (if (t/after? start end)
-     interval
-     (recur (t/plus start (t/days 1))
-            end
-            (concat interval [(f/unparse custom-formatter start)])))))
-
-(defn get-prices-between-dates [from to start-dt end-dt token]
+(defn get-prices-between-dates [from-airport to-airport start-dt end-dt token]
   (pmap
     #(let [sorted-map (into (sorted-map) (:data config/configs))
            data-updated (assoc sorted-map :returnDate %
-                                          :origin [from]
-                                          :destination [to]
+                                          :origin [from-airport]
+                                          :destination [to-airport]
                                           :departureDate [%])]
-       (get-flight-prices data-updated from to token))
-    (date-interval start-dt end-dt)))
+       (get-flight-prices data-updated from-airport to-airport token))
+    (date-helper/date-interval start-dt end-dt)))
 
 (defn -main
   [& args]
   (mount/start)
   (let [[from-airport to-airport from-date to-date] args
-        start-dt (f/parse from-date)
-        end-dt (f/parse to-date)
+        start-dt (date-helper/str-to-date from-date)
+        end-dt (date-helper/str-to-date to-date)
         token (get-token)
         l1 (get-prices-between-dates from-airport to-airport start-dt end-dt token)
         l2 (get-prices-between-dates to-airport from-airport start-dt end-dt token)
