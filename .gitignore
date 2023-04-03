@@ -15,4 +15,4 @@ pom.xml.asc
 .idea/
 .hgignore
 *.iml
-resources/config/production.edn
+production.edn

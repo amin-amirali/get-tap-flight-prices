@@ -4,4 +4,5 @@
 
 (defstate configs
           :start
-          (load-config :resource "config/config.edn"))
+          (load-config :resource "config/config.edn"
+                       :file "production.edn"))
