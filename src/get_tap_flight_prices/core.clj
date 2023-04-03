@@ -4,6 +4,7 @@
             [get-tap-flight-prices.print-map :as print-map]
             [get-tap-flight-prices.date-helper :as date-helper]
             [get-tap-flight-prices.flights-info :as fi]
+            [get-tap-flight-prices.db :as db]
             [cheshire.core :refer :all]
             [mount.core :as mount]))
 
@@ -28,6 +29,4 @@
         l2 (get-prices-between-dates to-airport from-airport start-dt end-dt token)
         final-list (flatten (merge l1 l2))]
     (doall
-      (print-map/list-of-maps-as-tsv-with-current-timestamp
-        final-list
-        [:departureDate :arrivalDate :outFareFamily :price :from :to]))))
+      (db/insert-rows! final-list))))
