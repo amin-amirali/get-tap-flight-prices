@@ -1,6 +1,7 @@
 (ns get-tap-flight-prices.flights-info
   (:require [clj-http.client :as client]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [get-tap-flight-prices.config :as config]))
 
 (defn getIdOutBoundFromList
   "From this: [{:idOutBound 1,(...)}{:idOutBound 2,(...)}]
@@ -37,13 +38,13 @@
   (let [url "https://booking.flytap.com/bfm/rest/session/create"
         request-options {:content-type :json
                          :cookie-policy :none}
-        form-params {:clientId ""
-                     :clientSecret ""
-                     :referralId ""
-                     :market ""
-                     :language ""
+        form-params {:clientId (:clientId config/configs)
+                     :clientSecret (:clientSecret config/configs)
+                     :referralId (:referralId config/configs)
+                     :market "NO"
+                     :language "en"
                      :userProfile nil
-                     :appModule ""}
+                     :appModule "0"}
         response (client/post url
                               (merge request-options {:form-params form-params
                                                       :content-type :json}))
