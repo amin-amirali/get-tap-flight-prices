@@ -1,6 +1,7 @@
 (ns get-tap-flight-prices.core
   (:gen-class)
   (:require [get-tap-flight-prices.config :as config]
+            [get-tap-flight-prices.print-map :as print-map]
             [clj-http.client :as client]
             [cheshire.core :refer :all]
             [clojure.data.json :as json]
@@ -97,14 +98,6 @@
        (get-flight-prices data-updated from to token))
     (date-interval start-dt end-dt)))
 
-(defn print-rows-as-tsv [prepared-rows]
-  (let [startdttm (.format (java.text.SimpleDateFormat. "yyyy/MM/dd HH:mm") (new java.util.Date))]
-    (->> prepared-rows
-         (map #(assoc % :extraction_date startdttm))
-         (map #(select-keys % [:departureDate :arrivalDate :outFareFamily :price :from :to :extraction_date]))
-         (map vals)
-         (map #(println (apply str (interpose "\t" %)))))))
-
 (defn -main
   [& args]
   (mount/start)
@@ -115,4 +108,7 @@
         l1 (get-prices-between-dates from-airport to-airport start-dt end-dt token)
         l2 (get-prices-between-dates to-airport from-airport start-dt end-dt token)
         final-list (flatten (merge l1 l2))]
-    (doall (print-rows-as-tsv final-list))))
+    (doall
+      (print-map/list-of-maps-as-tsv-with-current-timestamp
+        final-list
+        [:departureDate :arrivalDate :outFareFamily :price :from :to]))))
