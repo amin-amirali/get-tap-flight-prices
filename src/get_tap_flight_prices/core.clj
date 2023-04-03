@@ -1,7 +1,6 @@
 (ns get-tap-flight-prices.core
   (:gen-class)
   (:require [get-tap-flight-prices.config :as config]
-            [get-tap-flight-prices.print-map :as print-map]
             [get-tap-flight-prices.date-helper :as date-helper]
             [get-tap-flight-prices.flights-info :as fi]
             [get-tap-flight-prices.db :as db]

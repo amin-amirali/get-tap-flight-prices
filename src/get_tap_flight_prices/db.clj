@@ -6,15 +6,6 @@
 
 (def target-table :tap_flight_prices)
 
-(def flight-info->target-table-schema
-  {:departureDate :departure_ts
-   :arrivalDate :arrival_ts
-   :outFareFamily :flight_class
-   :price :price
-   :from :departure_airport
-   :to :arrival_airport
-   :extraction_date :extraction_datetime})
-
 (defstate db-spec
   :start {:dbtype "mysql"
           :dbname (:db-database config/configs)
@@ -27,7 +18,7 @@
   (let [startdttm (new java.util.Date)]
     (j/insert-multi! db-spec
                      target-table
-                     (map ;#(clojure.set/rename-keys % flight-info->target-table-schema)
+                     (map
                        #(-> {:departure_ts (to-sql-time (:departureDate %))
                              :arrival_ts (to-sql-time (:arrivalDate %))
                              :flight_class (:outFareFamily %)
