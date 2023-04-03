@@ -1,7 +1,8 @@
 (ns get-tap-flight-prices.flights-info
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
-            [get-tap-flight-prices.config :as config]))
+            [get-tap-flight-prices.config :as config]
+            [clojure.tools.logging :as log]))
 
 (defn getIdOutBoundFromList
   "From this: [{:idOutBound 1,(...)}{:idOutBound 2,(...)}]
@@ -50,18 +51,22 @@
                                                       :content-type :json}))
         parsed-response (json/read-str (:body response) :key-fn keyword)]
     (if (= (:status parsed-response) "200")
-      (:id parsed-response))))
+      (:id parsed-response)
+      (log/warn (str "Error: " (get-in parsed-response [:errors 0 :desc]))))))
 
 (defn get-data [data-updated token]
   (let [url "https://booking.flytap.com/bfm/rest/booking/availability/search/"
         request-options {:headers {"Authorization" (str "Bearer " token)}
                          :cookie-policy :none}
+        _ (log/info (str "Processing day: " (:departureDate data-updated) ", departing from "
+                         (:origin data-updated) " towards " (:destination data-updated)))
         response (client/post url
                               (merge request-options {:form-params data-updated
                                                       :content-type :json}))
         parsed-response (json/read-str (:body response) :key-fn keyword)]
     (if (= (:status parsed-response) "200")
-      parsed-response)))
+      parsed-response
+      (log/warn (str "Error: " (get-in parsed-response [:errors 0 :desc]))))))
 
 (defn get-flight-prices [data-updated from to token]
   (let [res (get-data data-updated token)

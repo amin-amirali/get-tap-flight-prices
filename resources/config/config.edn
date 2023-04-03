@@ -22,4 +22,13 @@
         :validTripType true
         :cmsId "string"
         :channelDetectionName ""
-        }}
+        }
+ :clientId nil
+ :clientSecret nil
+ :referralId nil
+ :db-host "some-host"
+ :db-port 3306
+ :db-username "some-user"
+ :db-password "some-pass"
+ :db-database "some-db"
+ }
