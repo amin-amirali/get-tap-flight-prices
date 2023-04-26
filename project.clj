@@ -1,4 +1,4 @@
-(defproject get-tap-flight-prices "0.1.0-SNAPSHOT"
+(defproject get-tap-flight-prices "0.1.0"
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [clj-http "3.12.3"] ; running curl and other http calls
                  [cheshire "5.11.0"] ; working with JSONs

@@ -12,12 +12,12 @@
     id-outbound-vector))
 
 (defn parse-flight-dates [l]
-  (for [outbound-info (get-in l [:data :listOutbound])]
-    (let [all-segments (get-in outbound-info [:listSegment])
-          all-leg-departure-and-arrivals (map #(select-keys % [:departureDate :arrivalDate]) all-segments)
-          dates [(:departureDate (first all-leg-departure-and-arrivals))
-                 (:arrivalDate (last all-leg-departure-and-arrivals))]]
-      dates)))
+  (into [] (for [outbound-info (get-in l [:data :listOutbound])]
+             (let [all-segments (get-in outbound-info [:listSegment])
+                   all-leg-departure-and-arrivals (map #(select-keys % [:departureDate :arrivalDate]) all-segments)
+                   dates {:departureDate (:departureDate (first all-leg-departure-and-arrivals))
+                          :arrivalDate (:arrivalDate (last all-leg-departure-and-arrivals))}]
+               dates))))
 
 (defn parse-flight-info-list [l]
   (flatten (for [flight-info (get-in l [:data :offers :listOffers])]
