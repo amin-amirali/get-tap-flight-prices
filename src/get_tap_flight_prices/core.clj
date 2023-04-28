@@ -4,6 +4,7 @@
             [get-tap-flight-prices.date-helper :as date-helper]
             [get-tap-flight-prices.flights-info :as fi]
             [get-tap-flight-prices.db :as db]
+            [get-tap-flight-prices.auth :as auth]
             [cheshire.core :refer :all]
             [mount.core :as mount]))
 
@@ -14,7 +15,7 @@
                                           :origin [from-airport]
                                           :destination [to-airport]
                                           :departureDate [%])]
-       (fi/get-flight-prices data-updated from-airport to-airport token))
+       (fi/get-best-flights data-updated from-airport to-airport token))
     (date-helper/date-interval start-dt end-dt)))
 
 (defn -main
@@ -23,7 +24,7 @@
   (let [[from-airport to-airport from-date to-date] args
         start-dt (date-helper/str-to-date from-date)
         end-dt (date-helper/str-to-date to-date)
-        token (fi/get-token)
+        token (auth/get-token)
         l1 (get-prices-between-dates from-airport to-airport start-dt end-dt token)
         l2 (get-prices-between-dates to-airport from-airport start-dt end-dt token)
         final-list (flatten (merge l1 l2))]
