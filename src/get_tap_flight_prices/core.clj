@@ -15,7 +15,7 @@
                                           :origin [from-airport]
                                           :destination [to-airport]
                                           :departureDate [%])]
-       (fi/get-best-flights data-updated from-airport to-airport token))
+       (fi/get-best-flights data-updated token))
     (date-helper/date-interval start-dt end-dt)))
 
 (defn -main

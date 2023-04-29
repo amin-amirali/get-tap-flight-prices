@@ -17,13 +17,13 @@
   Price will be the tie-breaker. Otherwise, it doesnt matter."
   [all-flight-schedules all-flights-all-rates]
   (let [quickest-flights (quickest-flights all-flight-schedules)
-        quickest-flights-with-rates (set/join quickest-flights all-flights-all-rates {:flight-id :outbound_id})]
+        quickest-flights-with-rates (set/join quickest-flights all-flights-all-rates {:flight-id :outbound-id})]
     (->> quickest-flights-with-rates
          (sort-by :price)
          (take 1))))
 
 (defn best-rate-grouped-by-outbound [all-outbounds-all-rates]
-  (for [vals (vals (group-by #(:outbound_id %) all-outbounds-all-rates))]
+  (for [vals (vals (group-by #(:outbound-id %) all-outbounds-all-rates))]
     (apply min-key :price vals)))
 
 (defn best-flight-by-price
@@ -32,7 +32,7 @@
   Duration will be the tie-breaker. Otherwise, it doesnt matter."
   [all-flight-schedules all-flights-all-rates]
   (let [best-rate-per-flight (best-rate-grouped-by-outbound all-flights-all-rates)
-        best-rate-incl-schedule (set/join all-flight-schedules best-rate-per-flight {:flight-id :outbound_id})]
+        best-rate-incl-schedule (set/join all-flight-schedules best-rate-per-flight {:flight-id :outbound-id})]
     (->> best-rate-incl-schedule
          (sort-by :duration)
          (sort-by :price)
@@ -52,18 +52,20 @@
                    outfare-family (select-keys flight-info [:outFareFamily])
                    total-price {:price (get-in flight-info [:totalPrice :price])}]
                (for [outbound-id group-flights-list]
-                 (merge {:outbound_id outbound-id} outfare-family total-price))))))
+                 (merge {:outbound-id outbound-id} outfare-family total-price))))))
 
-(defn all-flight-schedules [l]
-  (into [] (for [outbound-flight (get-in l [:data :listOutbound])]
+(defn all-flight-schedules [res]
+  (into [] (for [outbound-flight (get-in res [:data :listOutbound])]
              (let [id-flight (:idFlight outbound-flight)
                    duration (:duration outbound-flight)
+                   num-stops (:numberOfStops outbound-flight)
                    all-segments (get-in outbound-flight [:listSegment])
                    all-leg-departure-and-arrivals (map #(select-keys % [:departureDate :arrivalDate]) all-segments)
                    dates {:departureDate (:departureDate (first all-leg-departure-and-arrivals))
                           :arrivalDate (:arrivalDate (last all-leg-departure-and-arrivals))
                           :flight-id id-flight
-                          :duration duration}]
+                          :duration duration
+                          :num-stops num-stops}]
                dates))))
 
 (defn best-flights [parsed-response]
@@ -72,7 +74,7 @@
         best-flight-by-price (best-flight-by-price all-flight-schedules all-flights-all-rates)
         best-flight-by-duration (best-flight-by-duration all-flight-schedules all-flights-all-rates)
         unique-outbounts (distinct (concat best-flight-by-price best-flight-by-duration))]
-    (map #(dissoc % :flight-id :duration :outbound_id) unique-outbounts)))
+    (map #(dissoc % :flight-id :outbound-id) unique-outbounts)))
 
 (defn get-data [data-updated token]
   (let [url "https://booking.flytap.com/bfm/rest/booking/availability/search/"
@@ -88,9 +90,11 @@
       parsed-response
       (log/warn (str "Error: " (get-in parsed-response [:errors 0 :desc]))))))
 
-(defn get-best-flights [data-updated from to token]
-  (let [res (get-data data-updated token)
+(defn get-best-flights [data-updated token]
+  (let [from-airport (first (:origin data-updated))
+        to-airport (first (:destination data-updated))
+        res (get-data data-updated token)
         best-flights (best-flights res)
-        source-list {:from from}
-        destiny-list {:to to}]
+        source-list {:from from-airport}
+        destiny-list {:to to-airport}]
     (map #(merge %1 %2 %3) best-flights (repeat source-list) (repeat destiny-list))))
