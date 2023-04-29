@@ -76,6 +76,10 @@
         unique-outbounts (distinct (concat best-flight-by-price best-flight-by-duration))]
     (map #(dissoc % :flight-id :outbound-id) unique-outbounts)))
 
+(defn calculate-best-flights [parsed-response]
+  (when-let [_ parsed-response]
+    (best-flights parsed-response)))
+
 (defn get-data [data-updated token]
   (let [url "https://booking.flytap.com/bfm/rest/booking/availability/search/"
         request-options {:headers {"Authorization" (str "Bearer " token)}
@@ -94,7 +98,8 @@
   (let [from-airport (first (:origin data-updated))
         to-airport (first (:destination data-updated))
         res (get-data data-updated token)
-        best-flights (best-flights res)
-        source-list {:from from-airport}
-        destiny-list {:to to-airport}]
-    (map #(merge %1 %2 %3) best-flights (repeat source-list) (repeat destiny-list))))
+        best-flights (calculate-best-flights res)]
+    (map #(merge %1 %2 %3)
+         best-flights
+         (repeat {:from from-airport})
+         (repeat {:to to-airport}))))
