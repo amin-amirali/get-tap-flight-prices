@@ -4,6 +4,22 @@
             [clojure.tools.logging :as log]
             [clojure.set :as set]))
 
+(defn sort-results
+  "Sorting intermediate results ensures that the same order is applied to all functions
+  that calculate best flights. As such, if flight `f1` is a best flight in 2 different functions,
+  we can ensure that both will either use it, or ignore it in favour of `f2`, but a mix should not happen
+  in case of ties.
+  TO-DO: test this function to ensure that it really works as expected, because `best-flight-by-duration` and
+  `best-flight-by-price` are doing different sorts.."
+  [schedule-and-rates-res]
+  (->> schedule-and-rates-res
+       (sort-by :price)
+       (sort-by :outFareFamily)
+       (sort-by :num-stops)
+       (sort-by :duration)
+       (sort-by :arrivalDate)
+       (sort-by :departureDate)))
+
 (defn quickest-flights
   "Given a list of outbound flight schedules, returns a sub-list consisting of the fastest
   flights (i.e. the ones with the shortest travel time)."
@@ -18,7 +34,7 @@
   [all-flight-schedules all-flights-all-rates]
   (let [quickest-flights (quickest-flights all-flight-schedules)
         quickest-flights-with-rates (set/join quickest-flights all-flights-all-rates {:flight-id :outbound-id})]
-    (->> quickest-flights-with-rates
+    (->> (sort-results quickest-flights-with-rates)
          (sort-by :price)
          (take 1))))
 
@@ -33,7 +49,7 @@
   [all-flight-schedules all-flights-all-rates]
   (let [best-rate-per-flight (best-rate-grouped-by-outbound all-flights-all-rates)
         best-rate-incl-schedule (set/join all-flight-schedules best-rate-per-flight {:flight-id :outbound-id})]
-    (->> best-rate-incl-schedule
+    (->> (sort-results best-rate-incl-schedule)
          (sort-by :duration)
          (sort-by :price)
          (take 1))))
