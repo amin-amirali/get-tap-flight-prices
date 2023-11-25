@@ -1,11 +1,10 @@
-{:data {:adt 2
-        :chd 2
-        :passengers {:ADT 2 :CHD 2}
-        :paxSearch {:ADT 2 :CHD 2}
-        :numSeat 4
-        :numSeats 4
-        :departureDate ["04062023"]
-        :returnDate "04062023"
+{:data {:adt 1
+        :passengers {:ADT 1}
+        :paxSearch {:ADT 1}
+        :numSeat 1
+        :numSeats 1
+        :departureDate ["15032024"]
+        :returnDate "25032024"
         :origin ["OSL"]
         :destination ["LIS"]
         :cabinClass "E"
@@ -14,14 +13,16 @@
         :c14 0
         :language "en"
         :market "NO"
-        :oneWay true
-        :roundTripType false
+        :oneWay false
+        :roundTripType true
         :searchPoint true
         :session "string"
-        :tripType "O"
+        :tripType "R"
         :validTripType true
         :cmsId "string"
         :channelDetectionName ""
+        :changeReturn false
+        :multiCityTripType false
         }
  :clientId nil
  :clientSecret nil
