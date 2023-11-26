@@ -24,6 +24,7 @@
                              :flight_class (:outFareFamily %)
                              :price (:price %)
                              :departure_airport (:from %)
-                             :arrival_airport (:to %)}
+                             :arrival_airport (:to %)
+                             :price_return (:priceReturn %)}
                             (assoc :extraction_datetime (to-sql-time startdttm)))
                        list-of-maps))))

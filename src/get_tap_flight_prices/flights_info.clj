@@ -66,9 +66,10 @@
              (let [group-flights (:groupFlights flight-info)
                    group-flights-list (getIdOutBoundFromList group-flights)
                    outfare-family (select-keys flight-info [:outFareFamily])
-                   total-price {:price (get-in flight-info [:outbound :totalPrice :price])}]
+                   total-price {:price (get-in flight-info [:totalPrice :price])}
+                   total-price-return {:priceReturn (get-in flight-info [:outbound :totalPrice :price])}]
                (for [outbound-id group-flights-list]
-                 (merge {:outbound-id outbound-id} outfare-family total-price))))))
+                 (merge {:outbound-id outbound-id} outfare-family total-price total-price-return))))))
 
 (defn all-flight-schedules [res]
   (into [] (for [outbound-flight (get-in res [:data :listOutbound])]

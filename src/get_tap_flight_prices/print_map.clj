@@ -1,7 +1,7 @@
 (ns get-tap-flight-prices.print-map)
 
 (def all-keys
-  [:departureDate :arrivalDate :outFareFamily :price :from :to])
+  [:departureDate :arrivalDate :outFareFamily :price :priceReturn :from :to])
 
 (defn as-tsv-with-current-timestamp
   "Receives a list of maps, outputs these maps as tsv, following the ordered keys. Current time is also
