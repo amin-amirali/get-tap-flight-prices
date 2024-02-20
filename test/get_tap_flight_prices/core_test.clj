@@ -31,7 +31,10 @@
 (defn test-flow []
   (mount/start)
   (let [token (auth/get-token)
-        res (fi/get-data test-data-return token)]
+        res (try
+              (fi/get-data test-data-return token)
+              (catch Exception e
+                (println e)))]
     (->>
       (get-in res [:data :offers :listOffers])
       (map #(get-in % [:outbound]))

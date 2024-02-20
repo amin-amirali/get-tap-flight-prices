@@ -98,14 +98,14 @@
     (best-flights parsed-response)))
 
 (defn get-data [data-updated token]
-  (let [url "https://booking.flytap.com/bfm/rest/booking/availability/search/"
+  (let [url "https://booking.flytap.com/bfm/rest/booking/availability/search?payWithMiles=false&starAlliance=false"
         request-options {:headers {"Authorization" (str "Bearer " token)}
                          :cookie-policy :none}
         _ (log/info (str "Processing day: " (:departureDate data-updated) ", departing from "
                          (:origin data-updated) " towards " (:destination data-updated)))
         response (client/post url
                               (merge request-options {:form-params data-updated
-                                                      :content-type :json}))
+                                                      :content-type :application/json}))
         parsed-response (json/read-str (:body response) :key-fn keyword)]
     (if (= (:status parsed-response) "200")
       parsed-response
